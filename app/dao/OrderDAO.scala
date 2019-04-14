@@ -18,10 +18,10 @@ class OrderDAO @Inject()(/* db config */)(implicit ec: ExecutionContext){
 
   def getById(id: Long): Future[Option[Order]] = null
 
-  def create(order: Order): Future[Unit] = null
+  def create(order: Order): Future[Order] = null
 
-  def update(id: Long, order: Order): Future[Unit] = null
+  def update(id: Long, order: Order): Future[Order] = null
 
-  def getUserIdForOrder(id: Long): Future[Option[Long]] = null
+  def getByUserId(userId: Long): Future[Option[Order]] = null
 
 }

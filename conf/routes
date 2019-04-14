@@ -10,18 +10,18 @@ GET     /count                      controllers.CountController.count
 # An example controller showing how to write asynchronous code
 GET     /message                    controllers.AsyncController.message
 
-GET     /categories                 controllers.ProductController.getCategories
-GET     /category/:id               controllers.ProductController.getCategoryById(id: Integer)
+GET     /categories                 controllers.CategoryController.getCategories
+GET     /category/:id               controllers.CategoryController.getCategoryById(id: Long)
 
 GET     /products                   controllers.ProductController.getProducts
-GET     /product/:id                controllers.ProductController.getProductById(id: Integer)
+GET     /product/:id                controllers.ProductController.getProductById(id: Long)
 POST    /addproduct                 controllers.ProductController.addProduct
-PUT     /editproduct/:id            controllers.ProductController.editProduct(id: Integer)
-DELETE  /deleteproduct/:id          controllers.ProductController.deleteProduct(id: Integer)
+PUT     /editproduct/:id            controllers.ProductController.editProduct(id: Long)
+DELETE  /deleteproduct/:id          controllers.ProductController.deleteProduct(id: Long)
 
-GET     /basket/:id                 controllers.UserController.getBasketByUserId(id: Integer)
-GET     /user/:id                   controllers.UserController.getUserById(id: Integer)
 GET     /users                      controllers.UserController.getUsers
+GET     /user/:id                   controllers.UserController.getUserById(id: Long)
+
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

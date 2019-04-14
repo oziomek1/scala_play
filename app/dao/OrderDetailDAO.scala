@@ -16,6 +16,6 @@ class OrderDetailDAO @Inject()(/* db config */)(implicit ec: ExecutionContext){
 
   def getById(id: Long): Future[Option[OrderDetail]] = null
 
-  def getByOrderId(id: Long): Future[Option[OrderDetail]] = null
+  def getByOrderId(orderId: Long): Future[Option[OrderDetail]] = null
 
 }

@@ -18,9 +18,11 @@ class ProductDAO @Inject()(/* db config */)(implicit ec: ExecutionContext) {
 
   def getById(id: Long): Future[Option[Product]] = null
 
-  def create(product: Product): Future[Unit] = null
+  def getByCategoryId(categoryId: Long): Future[Seq[Product]] = null
 
-  def update(id: Long, product: Product): Future[Unit] = null
+  def create(name: String, description: String, category: Long, price: Float): Future[Product] = null
+
+  def update(id: Long, name: String, description: String, category: Long, price: Float): Future[Product] = null
 
   def delete(id: Long): Future[Unit] = null
 
