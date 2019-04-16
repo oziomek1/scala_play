@@ -2,5 +2,5 @@
 
 ### DB initial scheme:
 
-<img src="db_scheme.png" width="80%" />
+<img src="db_schema.png" width="80%" />
 
