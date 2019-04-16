@@ -3,33 +3,37 @@ CREATE TABLE IF NOT EXISTS "orderDetail" (
 	"id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 	"orderID"	INTEGER NOT NULL,
 	"productQuantity"	INTEGER DEFAULT 1,
-	"productID"	INTEGER,
+	"productID"	INTEGER NOT NULL,
 	"tax"	REAL,
-	"price"	REAL NOT NULL
+	"price"	INTEGER NOT NULL,
+	FOREIGN KEY("productID") REFERENCES "product"("id"),
+	FOREIGN KEY("orderID") REFERENCES "order"("id")
 );
 CREATE TABLE IF NOT EXISTS "order" (
 	"id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-	"userID"	INTEGER NOT NULL,
-	"address"	VARCHAR NOT NULL,
-	"date"	TIMESTAMP NOT NULL,
-	"shipped"	BOOLEAN NOT NULL DEFAULT 'False'
+	"userID"	INTEGER,
+	"address"	INTEGER,
+	"date"	NUMERIC,
+	"shipped"	NUMERIC NOT NULL DEFAULT 0,
+	FOREIGN KEY("userID") REFERENCES "user"("id")
 );
 CREATE TABLE IF NOT EXISTS "user" (
 	"id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-	"email"	VARCHAR NOT NULL,
-	"firstName"	VARCHAR,
-	"lastName"	VARCHAR,
-	"address"	VARCHAR
-);
-CREATE TABLE IF NOT EXISTS "category" (
-	"id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-	"name"	VARCHAR NOT NULL
+	"email"	TEXT NOT NULL,
+	"firstname"	TEXT,
+	"lastname"	TEXT,
+	"address"	TEXT
 );
 CREATE TABLE IF NOT EXISTS "product" (
 	"id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-	"name"	VARCHAR NOT NULL,
+	"name"	TEXT NOT NULL,
 	"description"	TEXT,
-	"productCategory"	INTEGER,
-	"price"	REAL NOT NULL
+	"category"	INTEGER NOT NULL,
+	"price"	REAL NOT NULL,
+	FOREIGN KEY("category") REFERENCES "category"("id")
+);
+CREATE TABLE IF NOT EXISTS "category" (
+	"id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+	"name"	INTEGER NOT NULL
 );
 COMMIT;
