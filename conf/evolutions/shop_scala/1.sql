@@ -1,4 +1,5 @@
-BEGIN TRANSACTION;
+# --- !Ups
+
 CREATE TABLE IF NOT EXISTS "products" (
 	"productID"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 	"productName"	TEXT NOT NULL,
@@ -38,4 +39,11 @@ CREATE TABLE IF NOT EXISTS "categories" (
 	"categoryID"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 	"categoryName"	INTEGER NOT NULL
 );
-COMMIT;
+
+# --- !Downs
+
+drop table "category" if exists;
+drop table "order" if exists;
+drop table "orderDetail" if exists
+drop table "product" if exists;
+drop table "user" if exists;
