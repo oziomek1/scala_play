@@ -4,22 +4,32 @@
 # ~~~~
 
 # An example controller showing a sample home page
-GET     /                           controllers.CategoryController.index
+GET     /                           controllers.HomeController.index
 # An example controller showing how to use dependency injection
 GET     /count                      controllers.CountController.count
 # An example controller showing how to write asynchronous code
 GET     /message                    controllers.AsyncController.message
 
+GET     /category                   controllers.CategoryController.index
 GET     /categories                 controllers.CategoryController.getCategories
 GET     /category/:id               controllers.CategoryController.getCategoryById(id: Long)
 POST    /addcategory                controllers.CategoryController.addCategory
 
+GET     /product                    controllers.ProductController.index
 GET     /products                   controllers.ProductController.getProducts
 GET     /product/:id                controllers.ProductController.getProductById(id: Long)
 POST    /addproduct                 controllers.ProductController.addProduct
 
+GET     /user                       controllers.UserController.index
 GET     /users                      controllers.UserController.getUsers
 GET     /user/:id                   controllers.UserController.getUserById(id: Long)
+POST    /adduser                    controllers.UserController.addUser
+
+GET     /order                      controllers.OrderController.index
+GET     /orders                     controllers.OrderController.getOrders
+GET     /order/:id                  controllers.OrderController.getOrderById(id: Long)
+POST    /addorder                   controllers.OrderController.addOrder
+
 
 
 # Map static resources from the /public folder to the /assets URL path

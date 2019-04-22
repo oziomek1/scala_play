@@ -31,7 +31,7 @@ class ProductController @Inject() (productDAO: ProductDAO,
 
   def index = Action.async { implicit request =>
     val categories = categoryDAO.all()
-    categories.map(cat => Ok(views.html.index(productForm,cat)))
+    categories.map(cat => Ok(views.html.indexProduct(productForm, cat)))
   }
 
   def getProducts = Action.async { implicit request =>
@@ -60,11 +60,11 @@ class ProductController @Inject() (productDAO: ProductDAO,
     }
     productForm.bindFromRequest.fold(
       errorForm => {
-        Future.successful(Ok(views.html.index(errorForm, a)))
+        Future.successful(Ok(views.html.indexProduct(errorForm, a)))
       },
       product => {
         productDAO.create(product.productName, product.productDescription, product.categoryID, product.productPriceNet, product.productPriceGross).map {
-          _ => Redirect(routes.CategoryController.index).flashing("success" -> "product.created")
+          _ => Redirect(routes.ProductController.index).flashing("success" -> "product.created")
         }
       }
     )

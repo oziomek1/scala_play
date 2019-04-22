@@ -23,9 +23,8 @@ class CategoryController @Inject() (categoryDAO: CategoryDAO,
     )(CreateCategoryForm.apply)(CreateCategoryForm.unapply)
   }
 
-  def index = Action.async { implicit request =>
-    val categories = categoryDAO.all()
-    categories.map(cat => Ok(views.html.indexCategory(categoryForm)))
+  def index = Action { implicit request =>
+    Ok(views.html.indexCategory(categoryForm))
   }
 
   def getCategories = Action.async { implicit request =>
@@ -41,11 +40,6 @@ class CategoryController @Inject() (categoryDAO: CategoryDAO,
   }
 
   def addCategory = Action.async { implicit request =>
-    var a:Seq[Category] = Seq[Category]()
-    val categories = categoryDAO.all().onComplete{
-      case Success(cat) => a= cat
-      case Failure(_) => print("fail")
-    }
     categoryForm.bindFromRequest.fold(
       errorForm => {
         Future.successful(Ok("ERROR"))

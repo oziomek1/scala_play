@@ -1,0 +1,21 @@
+@(user: Form[CreateUserForm])(implicit request: MessagesRequestHeader)
+
+    @import helper._
+
+    @request.flash.get("success").map { key =>
+        @request.messages(key)
+    }
+
+    @main("Welcome to Ebiznes - users") {
+        @form(CSRF(routes.UserController.addUser())) {
+            @inputText(user("userEmail"))
+            @inputPassword(user("userPassword"))
+            @inputText(user("userFirstname"))
+            @inputText(user("userLastname"))
+            @inputText(user("userAddress"))
+
+            <div class="buttons">
+                <input type="submit" value="Add User"/>
+            </div>
+        }
+    }

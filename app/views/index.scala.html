@@ -1,27 +1,19 @@
-@(product: Form[CreateProductForm], category: Seq[Category])(implicit request: MessagesRequestHeader)
+@(message: String)
 
-    @import helper._
+@*
+ * Call the `main` template with two arguments. The first
+ * argument is a `String` with the title of the page, the second
+ * argument is an `Html` object containing the body of the page.
+ *@
+@main("Welcome to Play") {
 
-    @request.flash.get("success").map { key =>
-        @request.messages(key)
-    }
+    <p>@message</p>
 
-    @main("Welcome to Ebiznes") {
-        @form(CSRF(routes.ProductController.addProduct())) {
-            @inputText(product("productName"))
-            @inputText(product("productDescription"))
-
-            <select name="category" id="category">
-            @for(cat <- category){
-                <option value="@cat.categoryID">@cat.categoryName</option>
-            }
-            </select>
-
-            @inputText(product("productPriceNet"))
-            @inputText(product("productPriceGross"))
-
-            <div class="buttons">
-                <input type="submit" value="Add Product"/>
-            </div>
-        }
-    }
+    @*
+     * Get an `Html` object by calling the built-in Play welcome
+     * template and passing a `String` message.
+     *@
+    @*
+     * welcome(message, style = "scala")
+     *@
+}

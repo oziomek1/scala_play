@@ -14,6 +14,17 @@ class UserDAO @Inject() (dbConfigProvider: DatabaseConfigProvider)(implicit ec: 
   import dbConfig._
   import profile.api._
 
+  class UserTable(tag: Tag) extends Table[User](tag, "users") {
+    def userID = column[Long]("userId", O.PrimaryKey, O.AutoInc)
+    def userEmail = column[String]("userEmail")
+    def userPassword = column[String]("userPassword")
+    def userFirstname = column[String]("userFirstname")
+    def userLastname = column[String]("userLastname")
+    def userAddress = column[String]("userAddress")
+
+    def * = (userID, userPassword, userEmail, userFirstname, userLastname, userAddress) <> ((User.apply _).tupled, User.unapply)
+  }
+
   val user = TableQuery[UserTable]
 
   def all(): Future[Seq[User]] = db.run {
@@ -24,13 +35,14 @@ class UserDAO @Inject() (dbConfigProvider: DatabaseConfigProvider)(implicit ec: 
     user.filter(_.userID === id).result
   }
 
-  class UserTable(tag: Tag) extends Table[User](tag, "users") {
-    def userID = column[Long]("userId", O.PrimaryKey, O.AutoInc)
-    def userEmail = column[String]("userEmail")
-    def userFirstname = column[String]("userFirstname")
-    def userLastname = column[String]("userLastname")
-    def userAddress = column[String]("userAddress")
-
-    def * = (userID, userEmail, userFirstname, userLastname, userAddress) <> ((User.apply _).tupled, User.unapply)
+  def create(email: String, password: String, firstname: String, lastname: String, address: String) = db.run {
+    (user.map(u => (u.userEmail, u.userPassword, u.userFirstname, u.userLastname, u.userAddress))
+      returning user.map(_.userID)
+      into {case
+      ((email, password, firstname, lastname, address), id) => User(id, password, email, firstname, lastname, address)
+    }) += (email, password, firstname, lastname, address)
   }
+
+
+
 }

@@ -6,7 +6,7 @@
         @request.messages(key)
     }
 
-    @main("Welcome to Ebiznes") {
+    @main("Welcome to Ebiznes - categories") {
         @form(CSRF(routes.CategoryController.addCategory())) {
             @inputText(product("categoryName"))
             <div class="buttons">
