@@ -2,28 +2,52 @@ package dao
 
 import javax.inject.{Inject, Singleton}
 import models._
-
+import play.api.db.slick.DatabaseConfigProvider
+import slick.jdbc.JdbcProfile
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ProductDAO @Inject()(/* db config */)(implicit ec: ExecutionContext) {
+class ProductDAO @Inject() (dbConfigProvider: DatabaseConfigProvider, val categoryDAO: CategoryDAO)
+                           (implicit ec: ExecutionContext) {
 
-  /*
-   * place for defining the table
-   *
-   * waiting for Slick
-   */
+  val dbConfig = dbConfigProvider.get[JdbcProfile]
+  import dbConfig._
+  import profile.api._
 
-  def all(): Future[Seq[Product]] = null
+  class ProductTable(tag: Tag) extends Table[Product](tag, "products") {
+    def productID = column[Long]("productID", O.PrimaryKey, O.AutoInc)
+    def productName = column[String]("productName")
+    def productDescription = column[String]("productDescription")
+    def productPriceNet = column[Double]("productPriceNet")
+    def productPriceGross = column[Double]("productPriceGross")
+    def categoryID = column[Long]("categoryID")
+    def category_fk = foreignKey("cat_fk", categoryID, cat)(_.categoryID)
 
-  def getById(id: Long): Future[Option[Product]] = null
+    def * = (productID, productName, productDescription, categoryID, productPriceNet, productPriceGross) <> ((Product.apply _).tupled, Product.unapply)
+  }
 
-  def getByCategoryId(categoryId: Long): Future[Seq[Product]] = null
+  import categoryDAO.CategoryTable
+  private val cat = TableQuery[CategoryTable]
+  private val product = TableQuery[ProductTable]
 
-  def create(name: String, description: String, category: Long, price: Float): Future[Product] = null
+  def all(): Future[Seq[Product]] = db.run {
+    product.result
+  }
 
-  def update(id: Long, name: String, description: String, category: Long, price: Float): Future[Product] = null
+  def getById(id: Long): Future[Seq[Product]] = db.run {
+    product.filter(_.productID === id).result
+  }
 
-  def delete(id: Long): Future[Unit] = null
+  def getByCategory(id: Long): Future[Seq[Product]] = db.run {
+    product.filter(_.categoryID === id).result
+  }
+
+  def create(name: String, description: String, category: Long, priceNet: Double, priceGross: Double): Future[Product] = db.run {
+    (product.map(p => (p.productName, p.productDescription, p.categoryID, p.productPriceNet, p.productPriceGross))
+      returning product.map(_.productID)
+      into {case
+      ((name, description, category, priceNet, priceGross), id) => Product(id, name, description, category, priceNet, priceGross)
+    }) += (name, description, category, priceNet, priceGross)
+  }
 
 }

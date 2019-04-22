@@ -19,8 +19,8 @@ class CategoryController @Inject() (categoryDAO: CategoryDAO,
     }
   }
 
-  def getCategoryById(id: Long) = Action.async { implicit request =>
-    categoryDAO.getById(id).map{ category =>
+  def getCategoryById(categoryID: Long) = Action.async { implicit request =>
+    categoryDAO.getById(categoryID).map{ category =>
       Ok(Json.toJson(category))
     }
   }

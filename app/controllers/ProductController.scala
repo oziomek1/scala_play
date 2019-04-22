@@ -9,6 +9,7 @@ import play.api.data.Forms._
 import play.api.data.validation.Constraints._
 import play.api.libs.json.Json
 import play.api.mvc._
+import scala.util.{Failure, Success}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -20,11 +21,17 @@ class ProductController @Inject() (productDAO: ProductDAO,
 
   val productForm: Form[CreateProductForm] = Form {
     mapping(
-      "name" -> nonEmptyText.verifying(minLength(3), maxLength(50)),
-      "description" -> nonEmptyText,
-      "category" -> longNumber,
-      "price" -> of(floatFormat)
+      "productName" -> nonEmptyText.verifying(minLength(3), maxLength(50)),
+      "productDescription" -> nonEmptyText,
+      "categoryID" -> longNumber,
+      "productPriceNet" -> of(doubleFormat),
+      "productPriceGross" -> of(doubleFormat),
     )(CreateProductForm.apply)(CreateProductForm.unapply)
+  }
+
+  def index = Action.async { implicit request =>
+    val categories = categoryDAO.all()
+    categories.map(cat => Ok(views.html.index(productForm,cat)))
   }
 
   def getProducts = Action.async { implicit request =>
@@ -39,33 +46,40 @@ class ProductController @Inject() (productDAO: ProductDAO,
     }
   }
 
+  def getByCategory(id: Long) = Action.async{ implicit request =>
+    productDAO.getByCategory(id).map { product =>
+      Ok(Json.toJson(product))
+    }
+  }
+
   def addProduct = Action.async { implicit request =>
+    var a:Seq[Category] = Seq[Category]()
+    val categories = categoryDAO.all().onComplete{
+      case Success(cat) => a= cat
+      case Failure(_) => print("fail")
+    }
     productForm.bindFromRequest.fold(
       errorForm => {
-        Future.successful(Ok(views.html.index(errorForm.toString)))
+        Future.successful(Ok(views.html.index(errorForm, a)))
       },
       product => {
-        productDAO.create(product.name, product.description, product.category, product.price).map {
-          _ => Redirect(routes.HomeController.index)
+        productDAO.create(product.productName, product.productDescription, product.categoryID, product.productPriceNet, product.productPriceGross).map {
+          _ => Redirect(routes.ProductController.index).flashing("success" -> "product.created")
         }
       }
     )
   }
 
-  def editProduct(id: Long) = Action.async { implicit request =>
-    val productToEdit = for {
-      product <- productDAO.getById(id)
-    } yield (product)
+  def handlePost = Action.async { implicit request =>
+    val productName = request.body.asJson.get("productName").as[String]
+    val productDescription = request.body.asJson.get("productDescription").as[String]
+    val categoryID = request.body.asJson.get("categoryID").as[Long]
+    val productPriceNet = request.body.asJson.get("productPriceNet").as[Double]
+    val productPriceGross = request.body.asJson.get("productPriceGross").as[Double]
 
-    val updatedProduct: models.Product = productForm.bind(productToEdit).get
-    productDAO.update(updatedProduct.id, updatedProduct.name, updatedProduct.description,
-      updatedProduct.categoryID, updatedProduct.price)
-    Redirect(routes.HomeController.index())
-  }
-
-  def deleteProduct(id: Long) = Action.async { implicit request =>
-    productDAO.delete(id)
-    Redirect(routes.HomeController.index())
+    productDAO.create(productName, productDescription, categoryID, productPriceNet, productPriceGross).map {
+      product => Ok(Json.toJson(product))
+    }
   }
 }
 
@@ -76,4 +90,5 @@ class ProductController @Inject() (productDAO: ProductDAO,
   * in a different way to your models.  In this case, it doesn't make sense to have an id parameter in the form, since
   * that is generated once it's created.
   */
-case class CreateProductForm(name: String, description: String, category: Long, price: Float)
+case class CreateProductForm(productName: String, productDescription: String, categoryID: Long,
+                             productPriceNet: Double, productPriceGross: Double)
