@@ -64,7 +64,7 @@ class ProductController @Inject() (productDAO: ProductDAO,
       },
       product => {
         productDAO.create(product.productName, product.productDescription, product.categoryID, product.productPriceNet, product.productPriceGross).map {
-          _ => Redirect(routes.ProductController.index).flashing("success" -> "product.created")
+          _ => Redirect(routes.CategoryController.index).flashing("success" -> "product.created")
         }
       }
     )

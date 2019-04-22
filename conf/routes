@@ -4,7 +4,7 @@
 # ~~~~
 
 # An example controller showing a sample home page
-GET     /                           controllers.ProductController.index
+GET     /                           controllers.CategoryController.index
 # An example controller showing how to use dependency injection
 GET     /count                      controllers.CountController.count
 # An example controller showing how to write asynchronous code
@@ -12,6 +12,7 @@ GET     /message                    controllers.AsyncController.message
 
 GET     /categories                 controllers.CategoryController.getCategories
 GET     /category/:id               controllers.CategoryController.getCategoryById(id: Long)
+POST    /addcategory                controllers.CategoryController.addCategory
 
 GET     /products                   controllers.ProductController.getProducts
 GET     /product/:id                controllers.ProductController.getProductById(id: Long)

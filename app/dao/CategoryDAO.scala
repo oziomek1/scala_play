@@ -15,6 +15,13 @@ class CategoryDAO @Inject() (dbConfigProvider: DatabaseConfigProvider)(implicit 
   import dbConfig._
   import profile.api._
 
+  class CategoryTable(tag: Tag) extends Table[Category](tag, "categories") {
+    def categoryID = column[Long]("categoryID", O.PrimaryKey, O.AutoInc)
+    def categoryName = column[String]("categoryName")
+
+    def * = (categoryID, categoryName) <> ((Category.apply _).tupled, Category.unapply)
+  }
+
   val category = TableQuery[CategoryTable]
 
   def all(): Future[Seq[Category]] = db.run {
@@ -25,11 +32,12 @@ class CategoryDAO @Inject() (dbConfigProvider: DatabaseConfigProvider)(implicit 
     category.filter(_.categoryID === id).result
   }
 
-  class CategoryTable(tag: Tag) extends Table[Category](tag, "categories") {
-    def categoryID = column[Long]("categoryID", O.PrimaryKey, O.AutoInc)
-    def categoryName = column[String]("categoryName")
-
-    def * = (categoryID, categoryName) <> ((Category.apply _).tupled, Category.unapply)
+  def create(name: String): Future[Category] = db.run {
+    (category.map(c => (c.categoryName))
+      returning category.map(_.categoryID)
+      into {case
+      ((name), id) => Category(id, name)
+    }) += (name)
   }
 
 }
