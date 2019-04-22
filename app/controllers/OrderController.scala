@@ -27,11 +27,6 @@ class OrderController @Inject()(orderDAO: OrderDAO,
     )(CreateOrderForm.apply)(CreateOrderForm.unapply)
   }
 
-  def index = Action.async { implicit request =>
-    val users = userDAO.all()
-    users.map(user => Ok(views.html.indexOrder(orderForm, user)))
-  }
-
   def getOrders = Action.async { implicit request =>
     orderDAO.all().map{ order =>
       Ok(Json.toJson(order))
@@ -56,16 +51,31 @@ class OrderController @Inject()(orderDAO: OrderDAO,
       case Success(users) => a= users
       case Failure(_) => print("fail")
     }
+
+    val allUsers = userDAO.all()
+    allUsers.map(usr => Ok(views.html.createOrder(orderForm, usr)))
+
     orderForm.bindFromRequest.fold(
       errorForm => {
-        Future.successful(Ok(views.html.indexOrder(errorForm, a)))
+        Future.successful(Ok(views.html.createOrder(errorForm, a)))
       },
       order => {
         orderDAO.create(order.userID, order.orderAddress, order.orderDate, order.orderShipped).map {
-          _ => Redirect(routes.OrderController.index).flashing("success" -> "order.created")
+          _ => Redirect(routes.HomeController.index).flashing("success" -> "order.created")
         }
       }
     )
+  }
+
+  def handlePost = Action.async { implicit request =>
+    val userID = request.body.asJson.get("userID").as[Long]
+    val orderAddress = request.body.asJson.get("orderAddress").as[String]
+    val orderDate = request.body.asJson.get("orderDate").as[String]
+    val orderShipped = request.body.asJson.get("orderShipped").as[Boolean]
+
+    orderDAO.create(userID, orderAddress, orderDate, orderShipped).map { order =>
+      Ok(Json.toJson(order))
+    }
   }
 
 }

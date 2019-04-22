@@ -6,7 +6,7 @@
         @request.messages(key)
     }
 
-    @main("Welcome to Ebiznes - users") {
+    @main("Add user") {
         @form(CSRF(routes.UserController.addUser())) {
             @inputText(user("userEmail"))
             @inputPassword(user("userPassword"))

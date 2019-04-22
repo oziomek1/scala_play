@@ -20,13 +20,10 @@ class OrderDAO @Inject()(dbConfigProvider: DatabaseConfigProvider, val userDAO: 
     def orderDate = column[String]("orderDate")
     def orderShipped = column[Boolean]("orderShipped")
     def userID = column[Long]("userID")
-    def user_fk = foreignKey("user_fk", userID, user)(_.userID)
 
     def * = (orderID, userID, orderAddress, orderDate, orderShipped) <> ((Order.apply _).tupled, Order.unapply)
   }
 
-  import userDAO.UserTable
-  private val user = TableQuery[UserTable]
   private val order = TableQuery[OrderTable]
 
   def all(): Future[Seq[Order]] = db.run {

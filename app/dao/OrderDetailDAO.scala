@@ -14,21 +14,17 @@ class OrderDetailDAO @Inject()(dbConfigProvider: DatabaseConfigProvider, val ord
   import dbConfig._
   import profile.api._
 
-  private class OrderDetailTable(tag: Tag) extends Table[OrderDetail](tag, "orderDetails") {
+  class OrderDetailTable(tag: Tag) extends Table[OrderDetail](tag, "orderDetails") {
     def orderDetailID = column[Long]("orderDetailID", O.PrimaryKey, O.AutoInc)
     def orderID = column[Long]("orderID")
     def productQuantity = column[Int]("productQuantity")
     def productID = column[Long]("productID")
     def orderDetailPriceNet = column[Double]("orderDetailPriceNet")
     def orderDetailPriceGross = column[Double]("orderDetailPriceGross")
-    def order_fk = foreignKey("order_fk", orderID, order)(_.orderID)
-    def product_fk = foreignKey("product_fk", productID, product)(_.productID)
 
     def * = (orderDetailID, orderID, productQuantity, productID, orderDetailPriceNet, orderDetailPriceGross) <> ((OrderDetail.apply _).tupled, OrderDetail.unapply)
   }
 
-  private val order = TableQuery[orderDAO.OrderTable]
-  private val product = TableQuery[productDAO.ProductTable]
   private val orderDetail = TableQuery[OrderDetailTable]
 
 

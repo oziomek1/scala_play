@@ -32,6 +32,10 @@ class CategoryDAO @Inject() (dbConfigProvider: DatabaseConfigProvider)(implicit 
     category.filter(_.categoryID === id).result
   }
 
+  def getByName(name: String): Future[Seq[Category]] = db.run {
+    category.filter(_.categoryName === name).result
+  }
+
   def create(name: String): Future[Category] = db.run {
     (category.map(c => (c.categoryName))
       returning category.map(_.categoryID)

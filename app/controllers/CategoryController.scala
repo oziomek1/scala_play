@@ -23,10 +23,6 @@ class CategoryController @Inject() (categoryDAO: CategoryDAO,
     )(CreateCategoryForm.apply)(CreateCategoryForm.unapply)
   }
 
-  def index = Action { implicit request =>
-    Ok(views.html.indexCategory(categoryForm))
-  }
-
   def getCategories = Action.async { implicit request =>
     categoryDAO.all().map{ category =>
       Ok(Json.toJson(category))
@@ -39,17 +35,31 @@ class CategoryController @Inject() (categoryDAO: CategoryDAO,
     }
   }
 
+  def getCategoryByName(name: String) = Action.async { implicit request =>
+    categoryDAO.getByName(name).map{ category =>
+      Ok(Json.toJson(category))
+    }
+  }
+
   def addCategory = Action.async { implicit request =>
     categoryForm.bindFromRequest.fold(
       errorForm => {
-        Future.successful(Ok("ERROR"))
+        Future.successful(Ok(views.html.createCategory(errorForm)))
       },
       category => {
         categoryDAO.create(category.categoryName).map {
-          _ => Redirect(routes.CategoryController.index).flashing("success" -> "category.created")
+          _ => Redirect(routes.HomeController.index).flashing("success" -> "category.created")
         }
       }
     )
+  }
+
+  def handlePost = Action.async { implicit request =>
+    val categoryName = request.body.asJson.get("categoryName").as[String]
+
+    categoryDAO.create(categoryName).map {
+      category => Ok(Json.toJson(category))
+    }
   }
 }
 

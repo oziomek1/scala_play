@@ -29,11 +29,6 @@ class ProductController @Inject() (productDAO: ProductDAO,
     )(CreateProductForm.apply)(CreateProductForm.unapply)
   }
 
-  def index = Action.async { implicit request =>
-    val categories = categoryDAO.all()
-    categories.map(cat => Ok(views.html.indexProduct(productForm, cat)))
-  }
-
   def getProducts = Action.async { implicit request =>
     productDAO.all().map{ product =>
       Ok(Json.toJson(product))
@@ -46,8 +41,14 @@ class ProductController @Inject() (productDAO: ProductDAO,
     }
   }
 
-  def getByCategory(id: Long) = Action.async{ implicit request =>
+  def getProductByCategory(id: Long) = Action.async{ implicit request =>
     productDAO.getByCategory(id).map { product =>
+      Ok(Json.toJson(product))
+    }
+  }
+
+  def getProductByName(name: String) = Action.async { implicit request =>
+    productDAO.getByName(name).map { product =>
       Ok(Json.toJson(product))
     }
   }
@@ -55,16 +56,20 @@ class ProductController @Inject() (productDAO: ProductDAO,
   def addProduct = Action.async { implicit request =>
     var a:Seq[Category] = Seq[Category]()
     val categories = categoryDAO.all().onComplete{
-      case Success(cat) => a= cat
+      case Success(cat) => a = cat
       case Failure(_) => print("fail")
     }
+
+    val allCategories = categoryDAO.all()
+    allCategories.map(cat => Ok(views.html.createProduct(productForm, cat)))
+
     productForm.bindFromRequest.fold(
       errorForm => {
-        Future.successful(Ok(views.html.indexProduct(errorForm, a)))
+        Future.successful(Ok(views.html.createProduct(errorForm, a)))
       },
       product => {
         productDAO.create(product.productName, product.productDescription, product.categoryID, product.productPriceNet, product.productPriceGross).map {
-          _ => Redirect(routes.ProductController.index).flashing("success" -> "product.created")
+          _ => Redirect(routes.HomeController.index).flashing("success" -> "product.created")
         }
       }
     )

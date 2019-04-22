@@ -6,7 +6,7 @@
         @request.messages(key)
     }
 
-    @main("Welcome to Ebiznes - products") {
+    @main("Add product") {
         @form(CSRF(routes.ProductController.addProduct())) {
             @inputText(product("productName"))
             @inputText(product("productDescription"))

@@ -6,7 +6,7 @@
         @request.messages(key)
     }
 
-    @main("Welcome to Ebiznes - orders") {
+    @main("Add order") {
         @form(CSRF(routes.OrderController.addOrder())) {
             <select name="user" id="user">
             @for(usr <- user){

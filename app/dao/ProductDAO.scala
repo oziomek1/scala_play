@@ -21,13 +21,10 @@ class ProductDAO @Inject() (dbConfigProvider: DatabaseConfigProvider, val catego
     def productPriceNet = column[Double]("productPriceNet")
     def productPriceGross = column[Double]("productPriceGross")
     def categoryID = column[Long]("categoryID")
-    def category_fk = foreignKey("cat_fk", categoryID, cat)(_.categoryID)
 
     def * = (productID, productName, productDescription, categoryID, productPriceNet, productPriceGross) <> ((Product.apply _).tupled, Product.unapply)
   }
 
-  import categoryDAO.CategoryTable
-  private val cat = TableQuery[CategoryTable]
   private val product = TableQuery[ProductTable]
 
   def all(): Future[Seq[Product]] = db.run {
@@ -40,6 +37,10 @@ class ProductDAO @Inject() (dbConfigProvider: DatabaseConfigProvider, val catego
 
   def getByCategory(id: Long): Future[Seq[Product]] = db.run {
     product.filter(_.categoryID === id).result
+  }
+
+  def getByName(name: String): Future[Seq[Product]] = db.run {
+    product.filter(_.productName === name).result
   }
 
   def create(name: String, description: String, category: Long, priceNet: Double, priceGross: Double): Future[Product] = db.run {

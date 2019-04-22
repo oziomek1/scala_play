@@ -10,25 +10,29 @@ GET     /count                      controllers.CountController.count
 # An example controller showing how to write asynchronous code
 GET     /message                    controllers.AsyncController.message
 
-GET     /category                   controllers.CategoryController.index
+GET     /addcategory                controllers.CategoryController.addCategory
 GET     /categories                 controllers.CategoryController.getCategories
-GET     /category/:id               controllers.CategoryController.getCategoryById(id: Long)
-POST    /addcategory                controllers.CategoryController.addCategory
+GET     /categories/:id             controllers.CategoryController.getCategoryById(id: Long)
+GET     /categories/byName/:name    controllers.CategoryController.getCategoryByName(name: String)
+POST    /addcategory                controllers.CategoryController.handlePost
 
-GET     /product                    controllers.ProductController.index
+GET     /addproduct                 controllers.ProductController.addProduct
 GET     /products                   controllers.ProductController.getProducts
-GET     /product/:id                controllers.ProductController.getProductById(id: Long)
-POST    /addproduct                 controllers.ProductController.addProduct
+GET     /products/:id               controllers.ProductController.getProductById(id: Long)
+GET     /products/byCategory/:id    controllers.ProductController.getProductByCategory(id: Long)
+GET     /products/byName/:name      controllers.ProductController.getProductByName(name: String)
+POST    /addproduct                 controllers.ProductController.handlePost
 
-GET     /user                       controllers.UserController.index
+GET     /adduser                    controllers.UserController.addUser
 GET     /users                      controllers.UserController.getUsers
-GET     /user/:id                   controllers.UserController.getUserById(id: Long)
-POST    /adduser                    controllers.UserController.addUser
+GET     /users/:id                  controllers.UserController.getUserById(id: Long)
+POST    /adduser                    controllers.UserController.handlePost
 
-GET     /order                      controllers.OrderController.index
+GET     /addorder                   controllers.OrderController.addOrder
 GET     /orders                     controllers.OrderController.getOrders
-GET     /order/:id                  controllers.OrderController.getOrderById(id: Long)
-POST    /addorder                   controllers.OrderController.addOrder
+GET     /orders/:id                 controllers.OrderController.getOrderById(id: Long)
+GET     /orders/byUser/:id          controllers.OrderController.getOrderByUser(id: Long)
+POST    /addorder                   controllers.OrderController.handlePost
 
 
 
