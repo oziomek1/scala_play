@@ -61,7 +61,7 @@ class ProductController @Inject() (productDAO: ProductDAO,
     }
 
     val allCategories = categoryDAO.all()
-    allCategories.map(cat => Ok(views.html.createProduct(productForm, cat)))
+    allCategories.map(cat => Ok(Json.toJson(cat)))
 
     productForm.bindFromRequest.fold(
       errorForm => {

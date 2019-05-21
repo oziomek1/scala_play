@@ -38,7 +38,8 @@ class OrderDAO @Inject()(dbConfigProvider: DatabaseConfigProvider, val userDAO: 
     (order.map(o => (o.userID, o.orderAddress, o.orderDate, o.orderShipped))
       returning order.map(_.orderID)
       into {case
-      ((userID, address, date, shipped), id) => Order(id, userID, address, date, shipped)
+      ((userID, address, date, shipped), id) =>
+      Order(id, userID, address, date, shipped)
     }) += (userID, address, date, shipped)
   }
 

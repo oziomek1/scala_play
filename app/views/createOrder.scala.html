@@ -1,4 +1,4 @@
-@(order: Form[CreateOrderForm], user: Seq[User])(implicit request: MessagesRequestHeader)
+@(order: Form[CreateOrderForm], user: Seq[User], product: Seq[Product])(implicit request: MessagesRequestHeader)
 
     @import helper._
 
@@ -8,14 +8,24 @@
 
     @main("Add order") {
         @form(CSRF(routes.OrderController.addOrder())) {
-            <select name="user" id="user">
+            <p>Who makes the order?</p>
+            <select name="userID" id="userID">
             @for(usr <- user){
-                <option value="@usr.userID">@usr.userEmail @usr.userFirstname @usr.userLastname</option>
+                <option value="@usr.userID">@usr.userFirstname</option>
             }
             </select>
+            <p></p>
             @inputText(order("orderAddress"))
-            @inputText(order("orderDate"))
-            @checkbox(order("orderShipped"))
+            @inputText(order("orderDetailsPriceNet"))
+            @inputText(order("orderDetailsPriceGross"))
+            <p>Which product?</p>
+            <select name="productID" id="productID">
+            @for(prod <- product){
+                <option value="@prod.productID">@prod.productName</option>
+            }
+            </select>
+            <p>How many?</p>
+            @inputText(order("productQuantity"))
 
             <div class="buttons">
                 <input type="submit" value="Add Order"/>

@@ -27,6 +27,9 @@ class OrderDetailDAO @Inject()(dbConfigProvider: DatabaseConfigProvider, val ord
 
   private val orderDetail = TableQuery[OrderDetailTable]
 
+  def all(): Future[Seq[OrderDetail]] = db.run {
+    orderDetail.result
+  }
 
   def getById(id: Long): Future[Seq[OrderDetail]] = db.run {
     orderDetail.filter(_.orderDetailID === id).result
@@ -36,4 +39,12 @@ class OrderDetailDAO @Inject()(dbConfigProvider: DatabaseConfigProvider, val ord
     orderDetail.filter(_.orderID === id).result
   }
 
+  def create(orderID: Long, productQuantity: Int, productID: Long, orderDetailPriceNet: Double, orderDetailPriceGross: Double): Future[OrderDetail] = db.run {
+    (orderDetail.map(o => (o.orderID, o.productQuantity, o.productID, o.orderDetailPriceNet, o.orderDetailPriceGross))
+      returning orderDetail.map(_.orderDetailID)
+      into {case
+      ((orderID, productQuantity, productID, orderDetailPriceNet, orderDetailPriceGross), id) =>
+        OrderDetail(id, orderID, productQuantity, productID, orderDetailPriceNet, orderDetailPriceGross)
+    }) += (orderID, productQuantity, productID, orderDetailPriceNet, orderDetailPriceGross)
+  }
 }

@@ -11,7 +11,7 @@
             @inputText(product("productName"))
             @inputText(product("productDescription"))
 
-            <select name="category" id="category">
+            <select name="categoryID" id="categoryID">
             @for(cat <- category){
                 <option value="@cat.categoryID">@cat.categoryName</option>
             }
