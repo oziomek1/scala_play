@@ -32,6 +32,7 @@ GET     /addorder                   controllers.OrderController.addOrder
 GET     /orders                     controllers.OrderController.getOrders
 GET     /orders/:id                 controllers.OrderController.getOrderById(id: Long)
 GET     /orders/byUser/:id          controllers.OrderController.getOrderByUser(id: Long)
+GET     /orderDetail/byOrder/:id    controllers.OrderController.getOrderDetailByOrderId(id: Long)
 POST    /addorder                   controllers.OrderController.handlePost
 
 

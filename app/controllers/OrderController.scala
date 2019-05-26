@@ -53,6 +53,12 @@ class OrderController @Inject()(orderDAO: OrderDAO,
     }
   }
 
+  def getOrderDetailByOrderId(id: Long) = Action.async{ implicit request =>
+    orderDetailDAO.getByOrderId(id).map( { orderDetail =>
+      Ok(Json.toJson(orderDetail))
+    })
+  }
+
   def addOrder = Action.async { implicit request =>
     var usr:Seq[User] = Seq[User]()
     val users = userDAO.all().onComplete{
@@ -66,7 +72,7 @@ class OrderController @Inject()(orderDAO: OrderDAO,
       case Failure(_) => print("fail")
     }
 
-    val dateFormat = new SimpleDateFormat("YYYY-MM-DD")
+    val dateFormat = new SimpleDateFormat("YYYY-MM-dd")
 
     val allUsers = userDAO.all()
     allUsers.map { usr => {
@@ -98,7 +104,7 @@ class OrderController @Inject()(orderDAO: OrderDAO,
     val productID = request.body.asJson.get("productID").as[Long]
     val orderDetailsPriceNet = request.body.asJson.get("orderDetailsPriceNet").as[Double]
     val orderDetailsPriceGross = request.body.asJson.get("orderDetailsPriceGross").as[Double]
-    val dateFormat = new SimpleDateFormat("YYYY-MM-DD")
+    val dateFormat = new SimpleDateFormat("YYYY-MM-dd")
 
     orderDAO.create(userID, orderAddress, dateFormat.format(Calendar.getInstance().getTime)).map { order =>
       orderDetailDAO.create(order.orderID, productQuantity, productID, orderDetailsPriceNet, orderDetailsPriceGross)
