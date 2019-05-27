@@ -15,6 +15,8 @@ GET     /categories                 controllers.CategoryController.getCategories
 GET     /categories/:id             controllers.CategoryController.getCategoryById(id: Long)
 GET     /categories/byName/:name    controllers.CategoryController.getCategoryByName(name: String)
 POST    /addcategory                controllers.CategoryController.handlePost
+POST    /categories/delete/:id      controllers.CategoryController.deleteCategory(id: Long)
+PUT     /categories/edit/:id        controllers.CategoryController.editCategory(id: Long)
 
 GET     /addproduct                 controllers.ProductController.addProduct
 GET     /products                   controllers.ProductController.getProducts
@@ -22,11 +24,15 @@ GET     /products/:id               controllers.ProductController.getProductById
 GET     /products/byCategory/:id    controllers.ProductController.getProductByCategory(id: Long)
 GET     /products/byName/:name      controllers.ProductController.getProductByName(name: String)
 POST    /addproduct                 controllers.ProductController.handlePost
+POST    /products/delete/:id        controllers.ProductController.deleteProduct(id: Long)
+PUT     /products/edit/:id          controllers.ProductController.editProduct(id: Long)
 
 GET     /adduser                    controllers.UserController.addUser
 GET     /users                      controllers.UserController.getUsers
 GET     /users/:id                  controllers.UserController.getUserById(id: Long)
 POST    /adduser                    controllers.UserController.handlePost
+POST    /users/delete/:id           controllers.UserController.deleteUser(id: Long)
+PUT     /users/edit/:id             controllers.UserController.editUser(id: Long)
 
 GET     /addorder                   controllers.OrderController.addOrder
 GET     /orders                     controllers.OrderController.getOrders
@@ -34,6 +40,8 @@ GET     /orders/:id                 controllers.OrderController.getOrderById(id:
 GET     /orders/byUser/:id          controllers.OrderController.getOrderByUser(id: Long)
 GET     /orderDetail/byOrder/:id    controllers.OrderController.getOrderDetailByOrderId(id: Long)
 POST    /addorder                   controllers.OrderController.handlePost
+POST    /orders/delete/:id          controllers.OrderController.deleteOrder(id: Long)
+PUT     /orders/edit/:id            controllers.OrderController.editOrder(id: Long)
 
 
 

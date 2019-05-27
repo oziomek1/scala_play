@@ -54,6 +54,20 @@ class CategoryController @Inject() (categoryDAO: CategoryDAO,
     )
   }
 
+  def deleteCategory(id: Long) = Action.async { implicit request =>
+    categoryDAO.delete(id).map { category =>
+      Ok(Json.toJson(category))
+    }
+  }
+
+  def editCategory(id: Long) = Action.async { implicit request =>
+    val categoryName = request.body.asJson.get("categoryName").as[String]
+
+    categoryDAO.update(id, categoryName).map {
+      category => Ok(Json.toJson(category))
+    }
+  }
+
   def handlePost = Action.async { implicit request =>
     val categoryName = request.body.asJson.get("categoryName").as[String]
 

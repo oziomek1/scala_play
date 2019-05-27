@@ -97,6 +97,30 @@ class OrderController @Inject()(orderDAO: OrderDAO,
     )
   }
 
+  def deleteOrder(id: Long) = Action.async { implicit request =>
+    orderDAO.delete(id).map { order =>
+      orderDetailDAO.delete(id)
+    }.map {
+      _ => Ok(Json.toJson(id))
+    }
+  }
+
+  def editOrder(id: Long) = Action.async { implicit request =>
+    val userID = request.body.asJson.get("userID").as[Long]
+    val orderAddress = request.body.asJson.get("orderAddress").as[String]
+    val productQuantity = request.body.asJson.get("productQuantity").as[Int]
+    val productID = request.body.asJson.get("productID").as[Long]
+    val orderDetailsPriceNet = request.body.asJson.get("orderDetailsPriceNet").as[Double]
+    val orderDetailsPriceGross = request.body.asJson.get("orderDetailsPriceGross").as[Double]
+    val orderDate = request.body.asJson.get("orderDate").as[String]
+    val orderShipped = request.body.asJson.get("orderShipped").as[Boolean]
+    orderDAO.update(id, userID, orderAddress, orderDate, orderShipped).map { order =>
+      orderDetailDAO.update(id, productQuantity, productID, orderDetailsPriceNet, orderDetailsPriceGross)
+    }.map {
+      orderDetail => Ok(Json.toJson(orderDetail))
+    }
+  }
+
   def handlePost = Action.async { implicit request =>
     val userID = request.body.asJson.get("userID").as[Long]
     val orderAddress = request.body.asJson.get("orderAddress").as[String]

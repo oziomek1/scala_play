@@ -43,6 +43,16 @@ class OrderDAO @Inject()(dbConfigProvider: DatabaseConfigProvider, val userDAO: 
     }) += (userID, address, date, shipped)
   }
 
+  def delete(orderID: Long): Future[Int] = db.run  {
+    order.filter(_.orderID === orderID).delete
+  }
+
+  def update(orderID: Long, userID: Long, orderAddress: String, orderDate: String, orderShipped: Boolean) = db.run {
+    order.filter(_.orderID == orderID)
+      .map(ord => (ord.userID, ord.orderAddress, ord.orderDate, ord.orderShipped))
+      .update((userID, orderAddress, orderDate, orderShipped))
+  }
+
   def getByUserId(userId: Long): Future[Seq[Order]] = db.run {
     order.filter(_.userID === userId).result
   }

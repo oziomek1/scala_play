@@ -47,4 +47,15 @@ class OrderDetailDAO @Inject()(dbConfigProvider: DatabaseConfigProvider, val ord
         OrderDetail(id, orderID, productQuantity, productID, orderDetailPriceNet, orderDetailPriceGross)
     }) += (orderID, productQuantity, productID, orderDetailPriceNet, orderDetailPriceGross)
   }
+
+  def update(orderID: Long, productQuantity: Int, productID: Long,
+             orderDetailPriceNet: Double, orderDetailPriceGross: Double) = db.run {
+    orderDetail.filter(_.orderID === orderID)
+      .map(ord => (ord.orderID, ord.productQuantity, ord.productID, ord.orderDetailPriceNet, ord.orderDetailPriceGross))
+      .update((orderID, productQuantity, productID, orderDetailPriceNet, orderDetailPriceGross))
+  }
+
+  def delete(orderDetailID: Long): Future[Int] = db.run  {
+    orderDetail.filter(_.orderDetailID === orderDetailID).delete
+  }
 }

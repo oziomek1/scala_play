@@ -44,4 +44,12 @@ class CategoryDAO @Inject() (dbConfigProvider: DatabaseConfigProvider)(implicit 
     }) += (name)
   }
 
+  def delete(categoryID: Long): Future[Int] = db.run  {
+    category.filter(_.categoryID === categoryID).delete
+  }
+
+  def update(categoryID: Long, categoryName: String): Future[Int] = db.run {
+    category.filter(_.categoryID === categoryID).map(cat => cat.categoryName).update(categoryName)
+  }
+
 }

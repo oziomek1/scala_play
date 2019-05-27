@@ -43,6 +43,15 @@ class UserDAO @Inject() (dbConfigProvider: DatabaseConfigProvider)(implicit ec: 
     }) += (email, password, firstname, lastname, address)
   }
 
+  def delete(userID: Long): Future[Int] = db.run  {
+    user.filter(_.userID === userID).delete
+  }
 
+  def update(userID: Long, userEmail:String, userPassword: String, userFirstname: String, userLastname: String,
+             userAddress: String): Future[Int] = db.run {
+    user.filter(_.userID === userID)
+      .map(usr => (usr.userEmail, usr.userPassword, usr.userFirstname, usr.userLastname, usr.userAddress))
+      .update((userEmail, userPassword, userFirstname, userLastname, userAddress))
+  }
 
 }

@@ -51,4 +51,15 @@ class ProductDAO @Inject() (dbConfigProvider: DatabaseConfigProvider, val catego
     }) += (name, description, category, priceNet, priceGross)
   }
 
+  def delete(productID: Long): Future[Int] = db.run  {
+    product.filter(_.productID === productID).delete
+  }
+
+  def update(productID: Long, productName: String, productDescription: String, productPriceNet: Double,
+             productPriceGross: Double, categoryID: Long): Future[Int] = db.run {
+    product.filter(_.productID === productID)
+      .map(prod => (prod.productName, prod.productDescription, prod.productPriceNet, prod.productPriceGross, prod.categoryID))
+      .update((productName, productDescription, productPriceNet, productPriceGross, categoryID))
+  }
+
 }

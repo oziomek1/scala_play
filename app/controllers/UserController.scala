@@ -51,6 +51,23 @@ class UserController @Inject()(userDAO: UserDAO,
     )
   }
 
+  def deleteUser(id: Long) = Action.async { implicit request =>
+    userDAO.delete(id).map { user =>
+      Ok(Json.toJson(user))
+    }
+  }
+
+  def editUser(id: Long) = Action.async { implicit request =>
+    val userEmail = request.body.asJson.get("userEmail").as[String]
+    val userPassword = request.body.asJson.get("userPassword").as[String]
+    val userFirstname = request.body.asJson.get("userFirstname").as[String]
+    val userLastname = request.body.asJson.get("userLastname").as[String]
+    val userAddress = request.body.asJson.get("userAddress").as[String]
+    userDAO.update(id, userEmail, userPassword, userFirstname, userLastname, userAddress).map { user =>
+      Ok(Json.toJson(user))
+    }
+  }
+
   def handlePost = Action.async { implicit request =>
     val userEmail = request.body.asJson.get("userEmail").as[String]
     val userPassword = request.body.asJson.get("userPassword").as[String]
