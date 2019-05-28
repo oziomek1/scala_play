@@ -117,7 +117,7 @@ class OrderController @Inject()(orderDAO: OrderDAO,
     orderDAO.update(id, userID, orderAddress, orderDate, orderShipped).map { order =>
       orderDetailDAO.update(id, productQuantity, productID, orderDetailsPriceNet, orderDetailsPriceGross)
     }.map {
-      orderDetail => Ok(Json.toJson(orderDetail))
+      orderDetail => Ok(Json.toJson("Ok"))
     }
   }
 

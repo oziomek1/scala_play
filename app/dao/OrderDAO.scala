@@ -48,7 +48,7 @@ class OrderDAO @Inject()(dbConfigProvider: DatabaseConfigProvider, val userDAO: 
   }
 
   def update(orderID: Long, userID: Long, orderAddress: String, orderDate: String, orderShipped: Boolean) = db.run {
-    order.filter(_.orderID == orderID)
+    order.filter(_.orderID === orderID)
       .map(ord => (ord.userID, ord.orderAddress, ord.orderDate, ord.orderShipped))
       .update((userID, orderAddress, orderDate, orderShipped))
   }

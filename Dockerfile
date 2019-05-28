@@ -1,45 +1,47 @@
-FROM ubuntu:18.04
+FROM openjdk:11.0.2
 
-MAINTAINER Wojciech Ozimek, https://github.com/oziomek1
-
-RUN useradd oziomek --create-home
-
-RUN apt-get update
-RUN apt-get install -y vim unzip curl git software-properties-common apt-utils apt-transport-https
-
-# add config here:
-
-# Install Java
-RUN echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | debconf-set-selections && \
-	add-apt-repository -y ppa:webupd8team/java && \
-	apt-get update && \
-	apt-get install -y --allow-unauthenticated oracle-java8-installer && \
-	apt-get install oracle-java8-set-default && \
-	rm -rf /var/lib/apt/lists/* && \
-	rm -rf /var/cache/oracle-jdk8-installer
+# Env variables
+ENV SCALA_VERSION 2.12.8
+ENV SBT_VERSION 1.2.8
 
 # Install Scala
-ENV SCALA_VERSION 2.12.8
-ENV SCALA_PKG scala-$SCALA_VERSION
+## Piping curl directly in tar
+RUN \
+  curl -fsL https://downloads.typesafe.com/scala/$SCALA_VERSION/scala-$SCALA_VERSION.tgz | tar xfz - -C /root/ && \
+  echo >> /root/.bashrc && \
+  echo "export PATH=~/scala-$SCALA_VERSION/bin:$PATH" >> /root/.bashrc
 
-RUN echo "deb http://dl.bintray.com/sbt/debian /" | tee -a /etc/apt/sources.list.d/sbt.list && \
-	apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2EE0EA64E40A89B84B2DF73499E82A75642AC823 && \
-    apt-get update && \
-    apt-get install --no-install-recommends -y --allow-unauthenticated sbt && \
-    wget http://www.scala-lang.org/files/archive/$SCALA_PKG.deb && \
-    dpkg -i $SCALA_PKG.deb && rm $SCALA_PKG.deb && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+# Install sbt
+RUN \
+  curl -L -o sbt-$SBT_VERSION.deb https://dl.bintray.com/sbt/debian/sbt-$SBT_VERSION.deb && \
+  dpkg -i sbt-$SBT_VERSION.deb && \
+  rm sbt-$SBT_VERSION.deb && \
+  apt-get update && \
+  apt-get install sbt && \
+  sbt sbtVersion && \
+  mkdir project && \
+  echo "scalaVersion := \"${SCALA_VERSION}\"" > build.sbt && \
+  echo "sbt.version=${SBT_VERSION}" > project/build.properties && \
+  echo "case object Temp" > Temp.scala && \
+  sbt compile && \
+  rm -r project && rm build.sbt && rm Temp.scala && rm -r target
 
+RUN apt-get install -y sqlite3 libsqlite3-dev
+
+EXPOSE 9000
 
 RUN mkdir /home/directory
 
+COPY . /home/directory
+
 VOLUME ["/home/directory/"]
 
-WORKDIR /home
+WORKDIR /home/directory
 
 ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
 
+RUN useradd oziomek --create-home
+
 USER oziomek
 
-CMD echo "Hello World"
+CMD sbt run
